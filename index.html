@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="meta-title">Forex Lot Size, Copy Trading & Compounding Calculator | Free Trading Tools</title>
+  <meta id="meta-desc" name="description" content="Calculate exact Forex & Gold (XAUUSD) lot size, Copy Trading net profit split, and monthly compounding returns instantly." />
+  <!-- Tailwind CSS CDN for modern dark fintech UI -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .glass-card {
+      background: rgba(17, 24, 39, 0.85);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      backdrop-filter: blur(12px);
+    }
+    .cta-pulse {
+      animation: pulse-border 2s infinite;
+    }
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- ================= HEADER ================= -->
+  <header class="border-b border-slate-800 bg-slate-900/60 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="bg-emerald-500 text-slate-950 font-extrabold px-2.5 py-1 rounded text-sm">FX PRO</span>
+        <span class="font-bold text-lg tracking-tight text-white">Smart Trading Calculators</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a id="header-tg-link" href="#" target="_blank" rel="noopener"
+           class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm px-4 py-2 rounded-lg transition flex items-center gap-1.5">
+          <span>📲 Join Free Telegram</span>
+        </a>
+        <a id="header-ib-link" href="#" target="_blank" rel="noopener"
+           class="border border-emerald-500/60 hover:bg-emerald-500/10 text-emerald-400 font-semibold text-xs sm:text-sm px-3.5 py-2 rounded-lg transition">
+          Open Zero-Spread Account
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="max-w-5xl mx-auto px-4 py-8 w-full">
+
+    <!-- Dynamic Programmatic SEO H1 & Subtitle -->
+    <div class="text-center max-w-3xl mx-auto mb-8">
+      <span id="seo-badge" class="inline-block bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+        100% Accurate MT4 / MT5 Calculator
+      </span>
+      <h1 id="dynamic-h1" class="text-2xl sm:text-4xl font-extrabold text-white leading-tight mb-3">
+        XAUUSD (Gold) & Forex Lot Size Calculator
+      </h1>
+      <p id="dynamic-subtitle" class="text-slate-400 text-sm sm:text-base">
+        Calculate your exact lot size, risk in dollars, copy trading profit share, and monthly compounding returns in seconds.
+      </p>
+    </div>
+
+    <!-- Audience Segment Tabs -->
+    <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+      <button onclick="switchMode('trader')" id="tab-trader"
+              class="py-3 px-2 rounded-lg font-bold text-xs sm:text-sm transition bg-emerald-500 text-slate-950 shadow">
+        📊 1. Active Traders
+        <span class="block text-[10px] font-normal opacity-80">Lot Size & Risk</span>
+      </button>
+      <button onclick="switchMode('copy')" id="tab-copy"
+              class="py-3 px-2 rounded-lg font-bold text-xs sm:text-sm transition text-slate-300 hover:text-white">
+        🤝 2. Copy Traders
+        <span class="block text-[10px] font-normal opacity-80">Profit & Lot Ratio</span>
+      </button>
+      <button onclick="switchMode('investor')" id="tab-investor"
+              class="py-3 px-2 rounded-lg font-bold text-xs sm:text-sm transition text-slate-300 hover:text-white">
+        📈 3. Investors
+        <span class="block text-[10px] font-normal opacity-80">Compounding & ROI</span>
+      </button>
+    </div>
+
+    <!-- Calculator Grid: Left = Inputs, Right = Outputs + Telegram CTA -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- LEFT COLUMN: INPUT CONTROLS (5 Cols) -->
+      <div class="lg:col-span-5 glass-card rounded-2xl p-6">
+
+        <!-- MODE 1: TRADER INPUTS -->
+        <div id="inputs-trader" class="space-y-4">
+          <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-2">Trader Position Parameters</h2>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Select Asset / Pair</label>
+            <select id="tr-pair" onchange="calculateAll()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 outline-none">
+              <option value="XAUUSD" data-pip="10">XAUUSD (Gold)</option>
+              <option value="EURUSD" data-pip="10">EURUSD (Euro / US Dollar)</option>
+              <option value="GBPUSD" data-pip="10">GBPUSD (Pound / US Dollar)</option>
+              <option value="USDJPY" data-pip="9.1">USDJPY (US Dollar / Yen)</option>
+              <option value="GBPJPY" data-pip="9.1">GBPJPY (Pound / Yen)</option>
+              <option value="BTCUSD" data-pip="10">BTCUSD (Bitcoin CFD)</option>
+              <option value="US30" data-pip="10">US30 (Dow Jones Index)</option>
+              <option value="NAS100" data-pip="10">NAS100 (Nasdaq 100)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Account Balance ($ USD)</label>
+            <input type="number" id="tr-balance" value="500" min="10" step="50" oninput="calculateAll()"
+                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Risk per Trade (%)</label>
+              <input type="number" id="tr-risk" value="2" min="0.1" max="50" step="0.5" oninput="calculateAll()"
+                     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Stop Loss (Pips)</label>
+              <input type="number" id="tr-sl" value="20" min="1" max="500" step="5" oninput="calculateAll()"
+                     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+            </div>
+          </div>
+
+          <!-- Quick Balance Pills -->
+          <div>
+            <span class="text-[11px] text-slate-400 block mb-1.5">Quick Account Presets:</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="setVal('tr-balance', 100)" class="text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded">$100</button>
+              <button onclick="setVal('tr-balance', 200)" class="text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded">$200</button>
+              <button onclick="setVal('tr-balance', 500)" class="text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded">$500</button>
+              <button onclick="setVal('tr-balance', 1000)" class="text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded">$1,000</button>
+              <button onclick="setVal('tr-balance', 5000)" class="text-xs bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded">$5,000</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODE 2: COPY TRADER INPUTS -->
+        <div id="inputs-copy" class="space-y-4 hidden">
+          <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-2">Copy Trading Parameters</h2>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Your Follower Deposit ($ USD)</label>
+            <input type="number" id="cp-deposit" value="1000" min="50" step="100" oninput="calculateAll()"
+                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Master Trader Balance ($ USD)</label>
+            <input type="number" id="cp-master" value="5000" min="100" step="500" oninput="calculateAll()"
+                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Expected Monthly ROI (%)</label>
+              <input type="number" id="cp-roi" value="12" min="1" max="100" step="1" oninput="calculateAll()"
+                     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Master Fee Split (%)</label>
+              <input type="number" id="cp-fee" value="30" min="0" max="60" step="5" oninput="calculateAll()"
+                     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+            </div>
+          </div>
+        </div>
+
+        <!-- MODE 3: INVESTOR INPUTS -->
+        <div id="inputs-investor" class="space-y-4 hidden">
+          <h2 class="text-lg font-bold text-white border-b border-slate-800 pb-2">Investor Compounding Plan</h2>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Initial Capital Investment ($ USD)</label>
+            <input type="number" id="inv-capital" value="5000" min="100" step="500" oninput="calculateAll()"
+                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Monthly Return (%)</label>
+              <input type="number" id="inv-rate" value="6" min="1" max="50" step="0.5" oninput="calculateAll()"
+                     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-400 mb-1">Duration (Months)</label>
+              <input type="number" id="inv-months" value="12" min="1" max="60" step="1" oninput="calculateAll()"
+                     class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white font-bold focus:border-emerald-500 outline-none" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Monthly Profit Withdrawal (%)</label>
+            <select id="inv-withdraw" onchange="calculateAll()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2.5 text-white focus:border-emerald-500 outline-none">
+              <option value="0">0% (100% Full Compounding Growth)</option>
+              <option value="50">50% Withdraw Monthly / 50% Compound</option>
+              <option value="100">100% Withdraw Monthly Passive Income</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: RESULTS + SMART TELEGRAM CTA BOX (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- KPI Result Cards -->
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs uppercase tracking-wider text-slate-400 font-bold">Instant Calculation Output</span>
+            <span id="result-tag" class="text-xs bg-slate-800 text-emerald-400 px-2.5 py-0.5 rounded font-semibold">XAUUSD • 2% Risk</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+              <span id="kpi1-label" class="text-[11px] text-slate-400 block">Recommended Lot</span>
+              <span id="kpi1-val" class="text-xl sm:text-2xl font-extrabold text-emerald-400">0.05 Lots</span>
+            </div>
+            <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+              <span id="kpi2-label" class="text-[11px] text-slate-400 block">Risk Amount</span>
+              <span id="kpi2-val" class="text-xl sm:text-2xl font-extrabold text-white">$10.00</span>
+            </div>
+            <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+              <span id="kpi3-label" class="text-[11px] text-slate-400 block">1:3 Target Profit</span>
+              <span id="kpi3-val" class="text-xl sm:text-2xl font-extrabold text-sky-400">$30.00</span>
+            </div>
+            <div class="bg-slate-900/90 border border-slate-800 p-3.5 rounded-xl">
+              <span id="kpi4-label" class="text-[11px] text-slate-400 block">Micro Trades (0.01)</span>
+              <span id="kpi4-val" class="text-xl sm:text-2xl font-extrabold text-amber-400">5 Positions</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SMART CONTEXTUAL TELEGRAM CONVERSION BOX -->
+        <div class="bg-gradient-to-br from-emerald-950/90 via-slate-900 to-sky-950/90 border-2 border-emerald-500/60 rounded-2xl p-6 cta-pulse">
+          <div class="flex items-start gap-3">
+            <div class="bg-emerald-500 text-slate-950 font-extrabold p-2.5 rounded-xl text-xl shrink-0">
+              🚀
+            </div>
+            <div class="w-full">
+              <span id="cta-badge" class="text-[11px] uppercase tracking-wider font-extrabold text-emerald-400 block mb-1">
+                LIVE XAUUSD TRADING SETUP & VIP COMMUNITY
+              </span>
+              <h3 id="cta-headline" class="text-lg sm:text-xl font-extrabold text-white mb-2">
+                Trading XAUUSD with 0.05 Lots on a $500 Account?
+              </h3>
+              <p id="cta-body-ml" class="text-slate-200 text-sm leading-relaxed mb-3">
+                കൃത്യമായ Lot Size മാത്രം പോരാ! തെറ്റായ സ്ഥലത്ത് എൻട്രി എടുത്താൽ Stop Loss അടിക്കും. ഇന്നത്തെ <strong>XAUUSD Buy/Sell Liquidity Zones</strong>, ലൈവ് ചാർട്ട് അനാലിസിസ്, കൂടാതെ Zero-Spread ട്രേഡിങ്ങ് സപ്പോർട്ടും ഞങ്ങളുടെ ഫ്രീ ടെലഗ്രാം ചാനലിൽ ഇപ്പോൾ ലഭ്യമാണ്.
+              </p>
+
+              <div class="flex flex-col sm:flex-row gap-3 mt-4">
+                <a id="main-tg-btn" href="#" target="_blank" rel="noopener"
+                   class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-center py-3 px-5 rounded-xl transition shadow-lg">
+                  📲 Join Free Telegram Channel Now
+                </a>
+                <a id="main-ib-btn" href="#" target="_blank" rel="noopener"
+                   class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold text-center py-3 px-4 rounded-xl transition text-sm">
+                  ⚡ Get VIP Zero-Spread Account
+                </a>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-2.5">
+                ✅ 100% Free Access • ✅ Daily Gold & Forex Analysis • ✅ Verified Copy Trading Portfolios
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- AUTO-GENERATED SEO FAQ SECTION (Helps Google Rank Long-Tail Keywords) -->
+        <div class="glass-card rounded-2xl p-6">
+          <h2 id="faq-heading" class="text-base font-bold text-white mb-4">
+            Frequently Asked Questions (XAUUSD $500 Account Risk Guide)
+          </h2>
+          <div id="dynamic-faq" class="space-y-3 text-sm text-slate-300">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= PROGRAMMATIC SEO DIRECTORY (100+ KEYWORD CLUSTER LINKS) ================= -->
+    <section class="mt-14 border-t border-slate-800 pt-10">
+      <div class="mb-4">
+        <h2 class="text-lg font-bold text-white">Popular Forex, Copy Trading & Investor Searches (Instant Load)</h2>
+        <p class="text-xs text-slate-400">
+          Click any pre-configured calculator page below to load exact position sizing, copy ratios, or compounding plans:
+        </p>
+      </div>
+      <div id="pseo-links-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
+        <!-- Populated automatically via JS pSEO generator -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-6 mt-12 text-center text-xs text-slate-500 px-4">
+    <p>Risk Warning: Forex and CFD trading involves significant risk to your invested capital. Past performance in Copy Trading does not guarantee future results.</p>
+  </footer>
+
+  <!-- ================= APPLICATION & PROGRAMMATIC SEO SCRIPT ================= -->
+  <script>
+    // =========================================================================
+    // 1. നിങ്ങളുടെ TELEGRAM & BROKER IB LINK ഇവിടെ മാറ്റുക (EDIT YOUR LINKS HERE)
+    // =========================================================================
+    const CONFIG = {
+      TELEGRAM_URL: "https://t.me/YOUR_TELEGRAM_CHANNEL", // നിങ്ങളുടെ ടെലഗ്രാം ചാനൽ ലിങ്ക്
+      IB_BROKER_URL: "https://your-broker-ib-link.com/register" // നിങ്ങളുടെ ഫോറെക്സ് ബ്രോക്കർ IB ലിങ്ക്
+    };
+
+    let currentMode = 'trader';
+
+    // Apply links to all CTA buttons
+    function initLinks() {
+      document.getElementById('header-tg-link').href = CONFIG.TELEGRAM_URL;
+      document.getElementById('main-tg-btn').href = CONFIG.TELEGRAM_URL;
+      document.getElementById('header-ib-link').href = CONFIG.IB_BROKER_URL;
+      document.getElementById('main-ib-btn').href = CONFIG.IB_BROKER_URL;
+    }
+
+    function setVal(id, val) {
+      document.getElementById(id).value = val;
+      calculateAll();
+    }
+
+    // Switch between Trader, Copy Trader, and Investor tabs
+    function switchMode(mode) {
+      currentMode = mode;
+      ['trader', 'copy', 'investor'].forEach(m => {
+        const tab = document.getElementById('tab-' + m);
+        const box = document.getElementById('inputs-' + m);
+        if (m === mode) {
+          tab.className = "py-3 px-2 rounded-lg font-bold text-xs sm:text-sm transition bg-emerald-500 text-slate-950 shadow";
+          box.classList.remove('hidden');
+        } else {
+          tab.className = "py-3 px-2 rounded-lg font-bold text-xs sm:text-sm transition text-slate-300 hover:text-white";
+          box.classList.add('hidden');
+        }
+      });
+      calculateAll();
+    }
+
+    // Core calculation + Dynamic Telegram CTA + Auto SEO FAQ updater
+    function calculateAll() {
+      if (currentMode === 'trader') {
+        const pairSelect = document.getElementById('tr-pair');
+        const pair = pairSelect.value;
+        const pipValPerLot = parseFloat(pairSelect.options[pairSelect.selectedIndex].getAttribute('data-pip')) || 10;
+        const balance = parseFloat(document.getElementById('tr-balance').value) || 100;
+        const riskPct = parseFloat(document.getElementById('tr-risk').value) || 1;
+        const slPips = parseFloat(document.getElementById('tr-sl').value) || 20;
+
+        const riskUSD = balance * (riskPct / 100);
+        const rawLot = riskUSD / (slPips * pipValPerLot);
+        const safeLot = Math.max(0.01, Math.round(rawLot * 100) / 100);
+        const reward1to3 = riskUSD * 3;
+        const microPositions = Math.max(1, Math.floor(safeLot / 0.01));
+
+        // Update KPIs
+        document.getElementById('result-tag').innerText = `${pair} • ${riskPct}% Risk`;
+        document.getElementById('kpi1-label').innerText = "Recommended Lot";
+        document.getElementById('kpi1-val').innerText = `${safeLot.toFixed(2)} Lots`;
+        document.getElementById('kpi2-label').innerText = "Max Dollar Risk";
+        document.getElementById('kpi2-val').innerText = `$${riskUSD.toFixed(2)}`;
+        document.getElementById('kpi3-label').innerText = "1:3 Target Profit";
+        document.getElementById('kpi3-val').innerText = `+$${reward1to3.toFixed(2)}`;
+        document.getElementById('kpi4-label').innerText = "0.01 Split Entries";
+        document.getElementById('kpi4-val').innerText = `${microPositions} Trades`;
+
+        // Update Dynamic SEO Headings
+        const pageTitle = `${pair} Lot Size Calculator for $${balance} Account (${riskPct}% Risk)`;
+        document.getElementById('dynamic-h1').innerText = pageTitle;
+        document.title = pageTitle + " | Free Forex Risk Tool";
+
+        // Update Smart Telegram Hook for Traders
+        document.getElementById('cta-badge').innerText = `LIVE ${pair} SETUP & ZERO-SPREAD VIP ACCESS`;
+        document.getElementById('cta-headline').innerText = `Trading ${pair} with ${safeLot.toFixed(2)} Lots on a $${balance} Account?`;
+        document.getElementById('cta-body-ml').innerHTML =
+          `⚠️ <strong>$${balance}</strong> അക്കൗണ്ടിൽ <strong>${safeLot.toFixed(2)} Lot</strong> വെച്ച് ${pair} ട്രേഡ് ചെയ്യുമ്പോൾ കൃത്യമായ Entry & Stop Loss അറിഞ്ഞിരിക്കണം! ഇന്നത്തെ <strong>${pair} Buy/Sell Liquidity Zones</strong>, VIP സിഗ്നലുകൾ, കുറഞ്ഞ സ്പ്രെഡ് ഉള്ള അക്കൗണ്ട് എന്നിവയ്ക്കായി ഞങ്ങളുടെ ഫ്രീ ടെലഗ്രാം ചാനലിൽ ജോയിൻ ചെയ്യൂ.`;
+
+        // Update Auto-Generated SEO FAQ
+        document.getElementById('faq-heading').innerText = `FAQ: Trading ${pair} on a $${balance} Forex Account`;
+        document.getElementById('dynamic-faq').innerHTML = `
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-800">
+            <strong class="text-white block mb-1">1. What is the safe lot size for ${pair} on a $${balance} account?</strong>
+            With a ${riskPct}% risk rule ($${riskUSD.toFixed(2)} max risk) and a ${slPips}-pip stop loss, the recommended lot size for ${pair} is <strong>${safeLot.toFixed(2)} standard lots</strong>.
+          </div>
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-800">
+            <strong class="text-white block mb-1">2. How many 0.01 micro lots can I open on $${balance}?</strong>
+            You can safely split your position into <strong>${microPositions} micro trades of 0.01 lot</strong> each to scale in and lock partial profits.
+          </div>
+        `;
+      }
+
+      else if (currentMode === 'copy') {
+        const deposit = parseFloat(document.getElementById('cp-deposit').value) || 500;
+        const master = parseFloat(document.getElementById('cp-master').value) || 5000;
+        const roi = parseFloat(document.getElementById('cp-roi').value) || 10;
+        const feePct = parseFloat(document.getElementById('cp-fee').value) || 30;
+
+        const copyRatio = deposit / master;
+        const grossProfit = deposit * (roi / 100);
+        const masterFee = grossProfit * (feePct / 100);
+        const netMonthly = grossProfit - masterFee;
+        const netRoiPct = (netMonthly / deposit) * 100;
+        const sixMonthVal = deposit * Math.pow(1 + (netRoiPct / 100), 6);
+
+        document.getElementById('result-tag').innerText = `Copy Ratio: ${copyRatio.toFixed(2)}x`;
+        document.getElementById('kpi1-label').innerText = "Your Net Monthly";
+        document.getElementById('kpi1-val').innerText = `+$${netMonthly.toFixed(2)}`;
+        document.getElementById('kpi2-label').innerText = `Master Fee (${feePct}%)`;
+        document.getElementById('kpi2-val').innerText = `$${masterFee.toFixed(2)}`;
+        document.getElementById('kpi3-label').innerText = "Safe Copy Multiplier";
+        document.getElementById('kpi3-val').innerText = `${copyRatio.toFixed(2)}x Ratio`;
+        document.getElementById('kpi4-label').innerText = "6-Month Compounded";
+        document.getElementById('kpi4-val').innerText = `$${Math.round(sixMonthVal)}`;
+
+        const pageTitle = `Forex Copy Trading Profit Calculator for $${deposit} Deposit (${roi}% ROI)`;
+        document.getElementById('dynamic-h1').innerText = pageTitle;
+        document.title = pageTitle;
+
+        document.getElementById('cta-badge').innerText = `VERIFIED LOW-DRAWDOWN COPY TRADING SYSTEM`;
+        document.getElementById('cta-headline').innerText = `Want to Earn ~$${netMonthly.toFixed(0)}/Month Passively on Your $${deposit} Deposit?`;
+        document.getElementById('cta-body-ml').innerHTML =
+          `🤝 സ്വയം ചാർട്ട് നോക്കി സമയം കളയാതെ നിങ്ങളുടെ <strong>$${deposit}</strong> നിക്ഷേപത്തിൽ നിന്ന് സ്ഥിരമായി ലാഭം നേടാം! കുറഞ്ഞ Drawdown-ഉം വെരിഫൈഡ് ഹിസ്റ്ററിയുമുള്ള ഞങ്ങളുടെ <strong>Master Copy Trading Account</strong> ലൈവ് റിസൾട്ടുകൾ കാണാൻ ടെലഗ്രാം കമ്മ്യൂണിറ്റിയിൽ ചേരൂ.`;
+
+        document.getElementById('faq-heading').innerText = `FAQ: Copy Trading with $${deposit} Capital`;
+        document.getElementById('dynamic-faq').innerHTML = `
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-800">
+            <strong class="text-white block mb-1">1. How much can I make with $${deposit} in Forex Copy Trading?</strong>
+            At ${roi}% monthly gross ROI and a ${feePct}% profit-sharing fee, your net monthly profit is <strong>$${netMonthly.toFixed(2)} (${netRoiPct.toFixed(1)}% net ROI)</strong>.
+          </div>
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-800">
+            <strong class="text-white block mb-1">2. What is the proportional lot ratio for $${deposit} copying a $${master} Master?</strong>
+            Your proportional equity multiplier is <strong>${copyRatio.toFixed(2)}x</strong> (if the Master opens 1.00 lot, your account automatically copies <strong>${(1 * copyRatio).toFixed(2)} lots</strong>).
+          </div>
+        `;
+      }
+
+      else if (currentMode === 'investor') {
+        const capital = parseFloat(document.getElementById('inv-capital').value) || 5000;
+        const rate = parseFloat(document.getElementById('inv-rate').value) || 6;
+        const months = parseInt(document.getElementById('inv-months').value) || 12;
+        const withdrawPct = parseFloat(document.getElementById('inv-withdraw').value) || 0;
+
+        let balance = capital;
+        let totalWithdrawn = 0;
+
+        for (let m = 1; m <= months; m++) {
+          const monthlyGain = balance * (rate / 100);
+          const cashOut = monthlyGain * (withdrawPct / 100);
+          const reinvested = monthlyGain - cashOut;
+          balance += reinvested;
+          totalWithdrawn += cashOut;
+        }
+
+        const totalNetProfit = (balance - capital) + totalWithdrawn;
+        const avgMonthlyIncome = totalNetProfit / months;
+
+        document.getElementById('result-tag').innerText = `${months} Months • ${rate}%/mo`;
+        document.getElementById('kpi1-label').innerText = "Final Portfolio Value";
+        document.getElementById('kpi1-val').innerText = `$${Math.round(balance).toLocaleString()}`;
+        document.getElementById('kpi2-label').innerText = "Total Net Profit";
+        document.getElementById('kpi2-val').innerText = `+$${Math.round(totalNetProfit).toLocaleString()}`;
+        document.getElementById('kpi3-label').innerText = "Avg Monthly Gain";
+        document.getElementById('kpi3-val').innerText = `$${Math.round(avgMonthlyIncome).toLocaleString()}/mo`;
+        document.getElementById('kpi4-label').innerText = "Cash Withdrawn";
+        document.getElementById('kpi4-val').innerText = `$${Math.round(totalWithdrawn).toLocaleString()}`;
+
+        const pageTitle = `$${capital} Forex Compounding Calculator at ${rate}% Monthly for ${months} Months`;
+        document.getElementById('dynamic-h1').innerText = pageTitle;
+        document.title = pageTitle;
+
+        document.getElementById('cta-badge').innerText = `PRIVATE INVESTOR PAMM & WEALTH PORTFOLIO`;
+        document.getElementById('cta-headline').innerText = `Grow $${capital.toLocaleString()} to $${Math.round(balance).toLocaleString()} with Institutional Risk Control`;
+        document.getElementById('cta-body-ml').innerHTML =
+          `📈 <strong>$${capital.toLocaleString()}</strong> നിക്ഷേപം ${months} മാസം കൊണ്ട് സുരക്ഷിതമായി വളർത്താൻ കർശനമായ Capital Protection ഉള്ള ഞങ്ങളുടെ <strong>Verified Investor Portfolio / PAMM System</strong> പരിശോധിക്കൂ. ലൈവ് Myfxbook റിപ്പോർട്ടുകൾക്കും സ്വകാര്യ കൺസൾട്ടേഷനുമായി ഞങ്ങളുടെ ടെലഗ്രാമിൽ ചേരൂ.`;
+
+        document.getElementById('faq-heading').innerText = `FAQ: $${capital} Forex Compounding Plan (${rate}% Monthly)`;
+        document.getElementById('dynamic-faq').innerHTML = `
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-800">
+            <strong class="text-white block mb-1">1. How much will $${capital} grow in ${months} months at ${rate}% monthly return?</strong>
+            Your initial $${capital.toLocaleString()} investment grows to <strong>$${Math.round(balance).toLocaleString()}</strong>, generating a total net profit of <strong>$${Math.round(totalNetProfit).toLocaleString()}</strong>.
+          </div>
+          <div class="bg-slate-900/70 p-3.5 rounded-lg border border-slate-800">
+            <strong class="text-white block mb-1">2. Can I withdraw monthly passive income from my Forex investment?</strong>
+            Yes. By selecting the 50% or 100% monthly withdrawal option above, you can lock in steady monthly cash flow while protecting your core capital.
+          </div>
+        `;
+      }
+    }
+
+    // =========================================================================
+    // 2. PROGRAMMATIC SEO (pSEO) URL PARSER & 100+ KEYWORD DIRECTORY GENERATOR
+    // =========================================================================
+    const PSEO_PRESETS = [
+      // Active Trader Keywords
+      { mode: 'trader', pair: 'XAUUSD', bal: 100, risk: 2, label: 'XAUUSD Lot Size Calculator for $100 Account' },
+      { mode: 'trader', pair: 'XAUUSD', bal: 200, risk: 2, label: 'XAUUSD Lot Size Calculator for $200 Account' },
+      { mode: 'trader', pair: 'XAUUSD', bal: 500, risk: 2, label: 'XAUUSD Lot Size Calculator for $500 Account' },
+      { mode: 'trader', pair: 'XAUUSD', bal: 1000, risk: 2, label: 'XAUUSD Lot Size Calculator for $1,000 Account' },
+      { mode: 'trader', pair: 'EURUSD', bal: 500, risk: 2, label: 'EURUSD Lot Size Calculator for $500 Account' },
+      { mode: 'trader', pair: 'GBPUSD', bal: 1000, risk: 1, label: 'GBPUSD Safe 1% Risk Lot Size for $1,000' },
+      { mode: 'trader', pair: 'BTCUSD', bal: 500, risk: 2, label: 'BTCUSD Crypto Lot Size for $500 Account' },
+      { mode: 'trader', pair: 'US30', bal: 300, risk: 2, label: 'US30 Index Lot Size Calculator for $300 Account' },
+      // Copy Trader Keywords
+      { mode: 'copy', dep: 200, master: 2000, roi: 15, label: 'Copy Trading Profit Calculator for $200 Deposit' },
+      { mode: 'copy', dep: 500, master: 5000, roi: 12, label: 'Copy Trading ROI & Lot Ratio for $500 Account' },
+      { mode: 'copy', dep: 1000, master: 5000, roi: 10, label: 'How Much Can I Make with $1,000 in Copy Trading?' },
+      { mode: 'copy', dep: 2000, master: 10000, roi: 10, label: '$2,000 Copy Trading Net Profit Split Calculator' },
+      // Investor Keywords
+      { mode: 'investor', cap: 1000, rate: 5, mos: 12, label: '$1,000 Forex Compounding at 5% Monthly (1 Year)' },
+      { mode: 'investor', cap: 3000, rate: 6, mos: 12, label: '$3,000 Forex Compounding Plan at 6% Monthly' },
+      { mode: 'investor', cap: 5000, rate: 5, mos: 24, label: '$5,000 Passive Forex Investment (24 Months)' },
+      { mode: 'investor', cap: 10000, rate: 4, mos: 12, label: '$10,000 Low-Risk PAMM Compounding at 4% Monthly' },
+      { mode: 'investor', cap: 5000, rate: 8, mos: 12, label: '$5,000 High-Yield Compounding at 8% Monthly' },
+      { mode: 'investor', cap: 20000, rate: 5, mos: 12, label: '$20,000 Wealth Growth Simulator (5% Monthly)' }
+    ];
+
+    function renderPseoLinks() {
+      const container = document.getElementById('pseo-links-container');
+      container.innerHTML = PSEO_PRESETS.map((item, idx) => `
+        <a href="?preset=${idx}" onclick="applyPreset(${idx}); return false;"
+           class="bg-slate-900/70 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 p-2.5 rounded-lg transition block truncate">
+          🔗 ${item.label}
+        </a>
+      `).join('');
+    }
+
+    function applyPreset(idx) {
+      const p = PSEO_PRESETS[idx];
+      if (!p) return;
+      if (p.mode === 'trader') {
+        document.getElementById('tr-pair').value = p.pair;
+        document.getElementById('tr-balance').value = p.bal;
+        document.getElementById('tr-risk').value = p.risk;
+        switchMode('trader');
+      } else if (p.mode === 'copy') {
+        document.getElementById('cp-deposit').value = p.dep;
+        document.getElementById('cp-master').value = p.master;
+        document.getElementById('cp-roi').value = p.roi;
+        switchMode('copy');
+      } else if (p.mode === 'investor') {
+        document.getElementById('inv-capital').value = p.cap;
+        document.getElementById('inv-rate').value = p.rate;
+        document.getElementById('inv-months').value = p.mos;
+        switchMode('investor');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Read URL query parameters on load for direct Google SEO landing pages
+    function checkUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('preset')) {
+        applyPreset(parseInt(params.get('preset')));
+        return;
+      }
+      const mode = params.get('mode');
+      if (mode === 'trader' || mode === 'copy' || mode === 'investor') {
+        if (params.has('pair')) document.getElementById('tr-pair').value = params.get('pair').toUpperCase();
+        if (params.has('balance')) document.getElementById('tr-balance').value = params.get('balance');
+        if (params.has('deposit')) document.getElementById('cp-deposit').value = params.get('deposit');
+        if (params.has('capital')) document.getElementById('inv-capital').value = params.get('capital');
+        switchMode(mode);
+      } else {
+        calculateAll();
+      }
+    }
+
+    // Initialize on load
+    initLinks();
+    renderPseoLinks();
+    checkUrlParams();
+  </script>
+</body>
+</html>
